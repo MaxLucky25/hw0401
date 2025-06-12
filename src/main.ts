@@ -1,7 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
-import AppModule from './app.module';
+import { AppModule } from './app.module';
 
 const PORT = process.env.PORT || 3003;
 
