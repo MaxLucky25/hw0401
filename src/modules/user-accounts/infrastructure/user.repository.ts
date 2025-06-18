@@ -3,7 +3,7 @@ import { User, UserDocument, UserModelType } from '../domain/user.entity';
 import { Injectable, NotFoundException } from '@nestjs/common';
 
 @Injectable()
-export class UsersRepository {
+export class UserRepository {
   constructor(@InjectModel(User.name) private UserModel: UserModelType) {}
 
   async findById(id: string): Promise<UserDocument | null> {

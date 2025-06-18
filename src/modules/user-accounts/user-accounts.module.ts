@@ -4,8 +4,8 @@ import { User, UserSchema } from './domain/user.entity';
 import { UsersController } from './api/user.controller';
 import { UsersService } from './application/user.service';
 import { UsersQueryRepository } from './infrastructure/query/users.query-repository';
-import { UsersRepository } from './infrastructure/users.repository';
-import { BcryptService } from '../../core/Bcrypt.service';
+import { UserRepository } from './infrastructure/user.repository';
+import { BcryptService } from '../../core/services/Bcrypt.service';
 
 @Module({
   imports: [
@@ -15,7 +15,7 @@ import { BcryptService } from '../../core/Bcrypt.service';
   providers: [
     UsersService,
     UsersQueryRepository,
-    UsersRepository,
+    UserRepository,
     BcryptService,
   ],
 })

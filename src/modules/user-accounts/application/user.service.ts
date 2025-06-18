@@ -1,25 +1,23 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { User, UserModelType } from '../domain/user.entity';
-import { UsersRepository } from '../infrastructure/users.repository';
+import { User, UserModelType, UserDocument } from '../domain/user.entity';
+import { UserRepository } from '../infrastructure/user.repository';
 import { UpdateUserInputDto } from '../api/input-dto/update-user.input.dto';
-import { CreateUserDomainDto } from '../domain/dto/create-user.domain.dto';
-import { BcryptService } from 'src/core/Bcrypt.service';
+import { CreateUserInputDto } from '../api/input-dto/users.input-dto';
+import { BcryptService } from 'src/core/services/Bcrypt.service';
+import { UserViewDto } from '../api/view-dto/users.view-dto';
 
 @Injectable()
 export class UsersService {
   constructor(
-    //инжектирование модели в сервис через DI
     @InjectModel(User.name)
     private UserModel: UserModelType,
-    private usersRepository: UsersRepository,
+    private usersRepository: UserRepository,
     private bcryptService: BcryptService,
   ) {}
 
-  async createUser(dto: CreateUserDomainDto): Promise<string> {
-    const passwordHash = await this.bcryptService.generateHash(
-      dto.passwordHash,
-    );
+  async createUser(dto: CreateUserInputDto): Promise<UserViewDto> {
+    const passwordHash = await this.bcryptService.generateHash(dto.password);
 
     const user = this.UserModel.createInstance({
       email: dto.email,
@@ -29,17 +27,15 @@ export class UsersService {
 
     await this.usersRepository.save(user);
 
-    return user._id.toString();
+    return UserViewDto.mapToView(user);
   }
 
-  async updateUser(id: string, dto: UpdateUserInputDto): Promise<string> {
+  async updateUser(id: string, dto: UpdateUserInputDto): Promise<void> {
     const user = await this.usersRepository.findOrNotFoundFail(id);
 
     user.update(dto);
 
     await this.usersRepository.save(user);
-
-    return user._id.toString();
   }
 
   async deleteUser(id: string) {

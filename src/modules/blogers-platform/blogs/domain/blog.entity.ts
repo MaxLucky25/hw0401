@@ -1,21 +1,56 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument } from 'mongoose';
-
-export type BlogDocument = HydratedDocument<Blog>;
+import { HydratedDocument, Model } from 'mongoose';
+import { CreateBlogDomainDto } from './dto/create-blog.domain.dto';
+import { UpdateBlogInputDto } from '../api/input-dto/update-blog.input.dto';
 
 @Schema({ timestamps: true })
 export class Blog {
-  @Prop({ required: true })
+  @Prop({ type: String, required: true })
   name: string;
 
-  @Prop({ required: true })
+  @Prop({ type: String, required: true })
   description: string;
 
-  @Prop({ required: true })
+  @Prop({ type: String, required: true })
   websiteUrl: string;
 
-  @Prop({ default: new Date() })
+  @Prop({ type: Date, default: new Date() })
   createdAt: Date;
+
+  @Prop({ type: Boolean, required: true })
+  isMembership: boolean;
+
+  @Prop({ type: Date, nullable: true })
+  deletedAt: Date | null;
+
+  static createBlog(dto: CreateBlogDomainDto): BlogDocument {
+    const blog = new Blog();
+    blog.name = dto.name;
+    blog.description = dto.description;
+    blog.websiteUrl = dto.websiteUrl;
+    blog.createdAt = dto.createdAt;
+    blog.isMembership = dto.isMembership;
+
+    return blog as BlogDocument;
+  }
+
+  makeDeleted() {
+    if (this.deletedAt !== null) {
+      throw new Error('Entity already deleted');
+    }
+    this.deletedAt = new Date();
+  }
+  update(dto: UpdateBlogInputDto) {
+    this.name = dto.name;
+    this.description = dto.description;
+    this.websiteUrl = dto.websiteUrl;
+  }
 }
 
 export const BlogSchema = SchemaFactory.createForClass(Blog);
+
+BlogSchema.loadClass(Blog);
+
+export type BlogDocument = HydratedDocument<Blog>;
+
+export type BlogModelType = Model<BlogDocument> & typeof Blog;

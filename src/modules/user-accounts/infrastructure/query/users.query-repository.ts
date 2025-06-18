@@ -53,7 +53,7 @@ export class UsersQueryRepository {
 
     const totalCount = await this.UserModel.countDocuments(filter);
 
-    const items = users.map(UserViewDto.mapToView);
+    const items = users.map((user) => UserViewDto.mapToView(user));
 
     return PaginatedViewDto.mapToView({
       items,

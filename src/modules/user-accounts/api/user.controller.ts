@@ -7,6 +7,7 @@ import {
   HttpStatus,
   Param,
   Post,
+  Put,
   Query,
 } from '@nestjs/common';
 import { UsersQueryRepository } from '../infrastructure/query/users.query-repository';
@@ -14,7 +15,8 @@ import { UsersService } from '../application/user.service';
 import { UserViewDto } from './view-dto/users.view-dto';
 import { GetUsersQueryParams } from './input-dto/get-users-query-params.input-dto';
 import { PaginatedViewDto } from '../../../core/dto/base.paginated.view-dto';
-import { CreateUserDomainDto } from '../domain/dto/create-user.domain.dto';
+import { CreateUserInputDto } from './input-dto/users.input-dto';
+import { UpdateUserInputDto } from './input-dto/update-user.input.dto';
 
 @Controller('users')
 export class UsersController {
@@ -36,10 +38,17 @@ export class UsersController {
   }
 
   @Post()
-  async createUser(@Body() body: CreateUserDomainDto): Promise<UserViewDto> {
-    const userId = await this.usersService.createUser(body);
+  async createUser(@Body() body: CreateUserInputDto): Promise<UserViewDto> {
+    return this.usersService.createUser(body);
+  }
 
-    return this.usersQueryRepository.getByIdOrNotFoundFail(userId);
+  @Put(':id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async update(
+    @Param('id') id: string,
+    @Body() body: UpdateUserInputDto,
+  ): Promise<void> {
+    return this.usersService.updateUser(id, body);
   }
 
   @Delete(':id')

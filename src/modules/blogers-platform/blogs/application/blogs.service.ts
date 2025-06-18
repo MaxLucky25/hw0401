@@ -1,32 +1,49 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
 import { CreateBlogDto } from '../dto/create-blog.dto';
-import { Blog, BlogDocument } from '../domain/blog.entity';
+import { Blog, BlogModelType } from '../domain/blog.entity';
+import { BlogRepository } from '../infrastructure/blog.repository';
+import { BlogViewDto } from '../api/view-dto/blog.view-dto';
+import { UpdateBlogInputDto } from '../api/input-dto/update-blog.input.dto';
 
 @Injectable()
 export class BlogsService {
-  constructor(@InjectModel(Blog.name) private blogModel: Model<BlogDocument>) {}
+  constructor(
+    @InjectModel(Blog.name)
+    private BlogModel: BlogModelType,
+    private blogRepository: BlogRepository,
+  ) {}
 
-  create(dto: CreateBlogDto) {
-    return this.blogModel.create({ ...dto, createdAt: new Date() });
+  async create(dto: CreateBlogDto): Promise<BlogViewDto> {
+    const blog = this.BlogModel.createBlog({
+      name: dto.name,
+      description: dto.description,
+      websiteUrl: dto.websiteUrl,
+      createdAt: dto.createdAt,
+      isMembership: dto.isMembership,
+    });
+
+    await this.blogRepository.save(blog);
+
+    return BlogViewDto.mapToView(blog);
+  }
+  //TODO: Реализовать остальные методы и исправить controller
+  // репозитории готовы по аналогии с user
+  // post не начинал даже
+
+  async updateBlog(id: string, dto: UpdateBlogInputDto): Promise<void> {
+    const blog = await this.blogRepository.findOrNotFoundFail(id);
+
+    blog.update(dto);
+
+    await this.blogRepository.save(blog);
   }
 
-  findAll() {
-    return this.blogModel.find().lean();
-  }
+  async deleteBlog(id: string) {
+    const blog = await this.blogRepository.findOrNotFoundFail(id);
 
-  findOne(id: string) {
-    return this.blogModel.findById(id).lean();
-  }
+    blog.makeDeleted();
 
-  async update(id: string, dto: CreateBlogDto) {
-    const res = await this.blogModel.findByIdAndUpdate(id, dto, { new: true });
-    return res ? true : false;
-  }
-
-  async remove(id: string) {
-    const result = await this.blogModel.findByIdAndDelete(id);
-    return result ? true : false;
+    await this.blogRepository.save(blog);
   }
 }
