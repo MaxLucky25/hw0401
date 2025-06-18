@@ -28,8 +28,8 @@ export class Blog {
     blog.name = dto.name;
     blog.description = dto.description;
     blog.websiteUrl = dto.websiteUrl;
-    blog.createdAt = dto.createdAt;
-    blog.isMembership = dto.isMembership;
+    blog.createdAt = new Date();
+    blog.isMembership = false;
 
     return blog as BlogDocument;
   }

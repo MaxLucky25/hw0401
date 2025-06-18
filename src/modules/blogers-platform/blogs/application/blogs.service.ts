@@ -19,17 +19,12 @@ export class BlogsService {
       name: dto.name,
       description: dto.description,
       websiteUrl: dto.websiteUrl,
-      createdAt: dto.createdAt,
-      isMembership: dto.isMembership,
     });
 
     await this.blogRepository.save(blog);
 
     return BlogViewDto.mapToView(blog);
   }
-  //TODO: Реализовать остальные методы и исправить controller
-  // репозитории готовы по аналогии с user
-  // post не начинал даже
 
   async updateBlog(id: string, dto: UpdateBlogInputDto): Promise<void> {
     const blog = await this.blogRepository.findOrNotFoundFail(id);
