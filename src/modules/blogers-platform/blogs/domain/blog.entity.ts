@@ -20,11 +20,11 @@ export class Blog {
   @Prop({ type: Boolean, required: true })
   isMembership: boolean;
 
-  @Prop({ type: Date, nullable: true })
+  @Prop({ type: Date, required: false, default: null })
   deletedAt: Date | null;
 
   static createBlog(dto: CreateBlogDomainDto): BlogDocument {
-    const blog = new Blog();
+    const blog = new this();
     blog.name = dto.name;
     blog.description = dto.description;
     blog.websiteUrl = dto.websiteUrl;
@@ -36,7 +36,8 @@ export class Blog {
 
   makeDeleted() {
     if (this.deletedAt !== null) {
-      throw new Error('Entity already deleted');
+      // Уже удалён — ничего не делаем
+      return;
     }
     this.deletedAt = new Date();
   }

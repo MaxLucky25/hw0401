@@ -21,7 +21,7 @@ export class User {
   @Prop({ type: Boolean, required: true, default: false })
   isEmailConfirmed: boolean;
 
-  @Prop({ type: Date, nullable: true })
+  @Prop({ type: Date,  required: false, default: null })
   deletedAt: Date | null;
 
   static createInstance(dto: CreateUserDomainDto): UserDocument {
@@ -30,6 +30,7 @@ export class User {
     user.passwordHash = dto.passwordHash;
     user.login = dto.login;
     user.isEmailConfirmed = false;
+    user.createdAt = new Date();
 
     return user as UserDocument;
   }
