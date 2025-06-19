@@ -8,6 +8,8 @@ import { BlogsService } from './blogs/application/blogs.service';
 import { PostsService } from './posts/application/posts.service';
 import { BlogQueryRepository } from './blogs/infrastructure/query/blog.query-repository';
 import { BlogRepository } from './blogs/infrastructure/blog.repository';
+import { PostQueryRepository } from './posts/infrastructure/query/post.query-repository';
+import { PostRepository } from './posts/infrastructure/postRepository';
 
 @Module({
   imports: [
@@ -17,6 +19,13 @@ import { BlogRepository } from './blogs/infrastructure/blog.repository';
     ]),
   ],
   controllers: [BlogsController, PostsController],
-  providers: [BlogsService, PostsService, BlogRepository, BlogQueryRepository],
+  providers: [
+    BlogsService,
+    BlogRepository,
+    BlogQueryRepository,
+    PostsService,
+    PostRepository,
+    PostQueryRepository,
+  ],
 })
 export class BloggersPlatformModule {}

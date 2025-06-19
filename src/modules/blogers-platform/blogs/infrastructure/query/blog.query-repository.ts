@@ -19,7 +19,7 @@ export class BlogQueryRepository {
     });
 
     if (!blog) {
-      throw new NotFoundException('user not found');
+      throw new NotFoundException('Blog not found');
     }
 
     return BlogViewDto.mapToView(blog);

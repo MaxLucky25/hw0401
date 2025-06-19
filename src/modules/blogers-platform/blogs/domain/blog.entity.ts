@@ -36,7 +36,6 @@ export class Blog {
 
   makeDeleted() {
     if (this.deletedAt !== null) {
-      // Уже удалён — ничего не делаем
       return;
     }
     this.deletedAt = new Date();
@@ -47,11 +46,11 @@ export class Blog {
     this.websiteUrl = dto.websiteUrl;
   }
 }
-
+// Добавляет монгошную схему
 export const BlogSchema = SchemaFactory.createForClass(Blog);
-
+// Добавляет методы класов к модели
 BlogSchema.loadClass(Blog);
-
+// Добавляет объекту методы умных объектов mongoose
 export type BlogDocument = HydratedDocument<Blog>;
-
+// Создает объек со всеми встроенными и статическими методами
 export type BlogModelType = Model<BlogDocument> & typeof Blog;

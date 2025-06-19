@@ -1,24 +1,61 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument } from 'mongoose';
-
-export type PostDocument = HydratedDocument<Post>;
+import { HydratedDocument, Model } from 'mongoose';
+import { CreatePostDomainDto } from './dto/create-post.domain.dto';
+import { UpdatePostInputDto } from '../api/input-dto/update-post.input.dto';
 
 @Schema({ timestamps: true })
 export class Post {
-  @Prop({ required: true })
+  @Prop({ type: String, required: true })
   title: string;
 
-  @Prop({ required: true })
+  @Prop({ type: String, required: true })
   shortDescription: string;
 
-  @Prop({ required: true })
+  @Prop({ type: String, required: true })
   content: string;
 
-  @Prop({ required: true })
+  @Prop({ type: String, required: true })
   blogId: string;
 
-  @Prop({ default: new Date() })
+  @Prop({ type: String, required: true })
+  blogName: string;
+
+  @Prop({ type: Date, default: new Date() })
   createdAt: Date;
+
+  @Prop({ type: Date, required: false, default: null })
+  deletedAt: Date | null;
+
+  static createPost(dto: CreatePostDomainDto): PostDocument {
+    const post = new this();
+    post.title = dto.title;
+    post.content = dto.content;
+    post.shortDescription = dto.shortDescription;
+    post.blogId = dto.blogId;
+    post.blogName = dto.blogName;
+    post.createdAt = new Date();
+
+    return post as PostDocument;
+  }
+
+  makeDelete() {
+    if (this.deletedAt !== null) {
+      return;
+    }
+    this.deletedAt = new Date();
+  }
+  updatePost(dto: UpdatePostInputDto) {
+    this.title = dto.title;
+    this.shortDescription = dto.shortDescription;
+    this.content = dto.content;
+    this.blogId = dto.blogId;
+  }
 }
 
 export const PostSchema = SchemaFactory.createForClass(Post);
+
+PostSchema.loadClass(Post);
+
+export type PostDocument = HydratedDocument<Post>;
+
+export type PostModelType = Model<PostDocument> & typeof Post;
