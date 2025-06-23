@@ -26,6 +26,12 @@ export class Post {
   @Prop({ type: Date, required: false, default: null })
   deletedAt: Date | null;
 
+  @Prop({ default: 0 })
+  likesCount: number;
+
+  @Prop({ default: 0 })
+  dislikesCount: number;
+
   static createPost(dto: CreatePostDomainDto): PostDocument {
     const post = new this();
     post.title = dto.title;
