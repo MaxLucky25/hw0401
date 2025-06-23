@@ -22,7 +22,7 @@ export class BlogRepository {
 
     if (!blog) {
       //TODO: replace with domain exception
-      throw new NotFoundException('user not found');
+      throw new NotFoundException('blog not found');
     }
 
     return blog;

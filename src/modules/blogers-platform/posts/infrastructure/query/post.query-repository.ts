@@ -24,11 +24,42 @@ export class PostQueryRepository {
     return PostViewDto.mapToView(post);
   }
 
-  async getAllBlogs(
+  async getAllPost(
     query: GetPostsQueryParams,
   ): Promise<PaginatedViewDto<PostViewDto[]>> {
     const filter: FilterQuery<Post> = {
       deletedAt: null,
+    };
+    if (query.searchTitleTerm) {
+      filter.$or = filter.$or || [];
+      filter.$or.push({
+        title: { $regex: query.searchTitleTerm, $options: 'i' },
+      });
+    }
+
+    const post = await this.PostModel.find(filter)
+      .sort({ [query.sortBy]: query.sortDirection })
+      .skip(query.calculateSkip())
+      .limit(query.pageSize);
+
+    const totalCount = await this.PostModel.countDocuments(filter);
+
+    const items = post.map((post) => PostViewDto.mapToView(post));
+
+    return PaginatedViewDto.mapToView({
+      items,
+      totalCount,
+      page: query.pageNumber,
+      size: query.pageSize,
+    });
+  }
+  async getAllPostForBlog(
+    blogId: string,
+    query: GetPostsQueryParams,
+  ): Promise<PaginatedViewDto<PostViewDto[]>> {
+    const filter: FilterQuery<Post> = {
+      deletedAt: null,
+      blogId,
     };
     if (query.searchTitleTerm) {
       filter.$or = filter.$or || [];

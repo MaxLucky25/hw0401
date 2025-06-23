@@ -34,7 +34,7 @@ export class PostsController {
   async findAll(
     @Query() query: GetPostsQueryParams,
   ): Promise<PaginatedViewDto<PostViewDto[]>> {
-    return this.postQueryRepository.getAllBlogs(query);
+    return this.postQueryRepository.getAllPost(query);
   }
 
   @Post()
