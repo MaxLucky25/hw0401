@@ -47,12 +47,8 @@ export class PostsService {
     await this.postRepository.save(post);
   }
   async createPostForBlog(blogId: string, input: CreatePostDto) {
-    try {
-      const blog = await this.blogRepository.findOrNotFoundFail(blogId);
-      if (!blog) return null;
-      return await this.create({ ...input, blogId });
-    } catch {
-      return null;
-    }
+    await this.blogRepository.findOrNotFoundFail(blogId);
+    return await this.create({ ...input, blogId });
   }
 }
+
