@@ -4,14 +4,14 @@ export class UserViewDto {
   id: string;
   login: string;
   email: string;
-  createdAt: Date;
+  createdAt: string;
 
   static mapToView(user: UserDocument): UserViewDto {
     return {
       id: user._id.toString(),
       email: user.email,
       login: user.login,
-      createdAt: user.createdAt,
+      createdAt: user.createdAt.toISOString(),
     };
   }
 }
